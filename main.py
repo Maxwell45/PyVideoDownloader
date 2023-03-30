@@ -1,17 +1,25 @@
-from pytube import YouTube as yt
+from pytube import YouTube as yt, StreamQuery, Stream
+
+
+def progress_function(stream, chunk, bytes_remaining):
+    size = stream.filesize
+    p = percent(bytes_remaining, size)
+    print(str(p) + '%')
+
+
+def percent(tem, total):
+    perc = (float(tem) / float(total)) * float(100)
+    return perc
 
 
 def download(link, res, audio):
-    youtube_object = yt(link)
+    youtube_object = yt(link, on_progress_callback=progress_function())
     if audio:
-        youtube_object = youtube_object.streams.get_audio_only("mp3")
+        download_stream: Stream = youtube_object.streams.get_audio_only("mp3").first()
     else:
-        youtube_object = youtube_object.streams.get_by_resolution(res)
-    try:
-        youtube_object.download("D:\\downloads\\", None, None, False, 10, 5)
-        print("Download is completed successfully")
-    except:
-        print("An error has occurred, check URL or the quality resolution")
+        download_stream: Stream = youtube_object.streams.filter(resolution=res).first()
+    download_stream.download("D:\\downloads\\", None, None, False, 10, 5)
+    print("Download is completed successfully")
 
 
 video_url = input("Enter the YouTube video URL: ")
