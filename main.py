@@ -1,37 +1,62 @@
-from pytube import YouTube as yt, StreamQuery, Stream
+from time import sleep
+
+from pytubefix import YouTube as yt
+from pytubefix import Playlist as pl
+import re
 
 
-def progress_function(stream, chunk, bytes_remaining):
-    size = stream.filesize
-    p = percent(bytes_remaining, size)
-    print(str(p) + '%')
+def get_size(o):
+    s = 0
+    for _ in o:
+        s += 1
+    return s
 
 
-def percent(tem, total):
-    perc = (float(tem) / float(total)) * float(100)
-    return perc
+def download(video, audio_only, quality):
+    if video.streams.get_by_resolution(quality) is None:
+        print(video.title + " does not have the specified resolution available. Skipping...")
+        return
+    print("Downloading " + video.title)
+    while True:
+        try:
+            if audio_only:
+                video.streams.get_audio_only().download(path)
+            else:
+                video.streams.get_by_resolution(quality).download(path)
+            print("Download successful")
+            break
+        except:
+            sleep(10)
+            print("Failed to download " + video.title + ", retrying...")
+            continue
 
 
-def download(link, res, audio):
-    youtube_object = yt(link, on_progress_callback=progress_function())
-    if audio:
-        download_stream: Stream = youtube_object.streams.get_audio_only("mp3").first()
-    else:
-        download_stream: Stream = youtube_object.streams.filter(resolution=res).first()
-    download_stream.download("D:\\downloads\\", None, None, False, 10, 5)
-    print("Download is completed successfully")
-
-
-video_url = input("Enter the YouTube video URL: ")
-while True:
-    audio_only = input("Download audio only? y/n: ")
-    audio_only = audio_only.lower()
+path = "D:\\downloads"
+url = input("Paste the video or playlist URL here: ")
+audio_only = None
+while audio_only != "y" and audio_only != "n":
+    audio_only = input("Download audio only? ").lower()
     if audio_only == "y":
-        print("Downloading the video")
-        download(video_url, None, True)
+        audio_only = True
         break
     if audio_only == "n":
-        resolution = input("Enter the resolution: ")
-        print("Downloading the video")
-        download(video_url, resolution, False)
+        audio_only = False
         break
+
+quality = ""
+
+if not audio_only:
+    quality = input("Please select your desired quality: ")
+
+if re.search("list=", url) is not None:
+    playlist = pl(url)
+    size = get_size(playlist.videos)
+    for i in range(0, size - 1):
+        video = playlist.videos[i]
+        print("Downloading video " + str(i + 1) + " out of " + str(size - 1))
+        download(video, audio_only, quality)
+
+
+else:
+    video = yt(url)
+    download(video, audio_only, quality)
