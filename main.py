@@ -1,8 +1,10 @@
 from collections.abc import Iterable
+
 from time import sleep
 
 from pytubefix import YouTube as yt
 from pytubefix import Playlist as pl
+
 import re
 
 
@@ -29,29 +31,30 @@ def get_common_resolutions(videos: Iterable[yt]):
     for v in videos:
         video_resolutions = get_resolutions(v)
         for r in resolutions:
-            if (video_resolutions.count(r) == 0):
+            if video_resolutions.count(r) == 0:
                 resolutions.remove(r)
-                if (get_size(resolutions) == 0):
+                if get_size(resolutions) == 0:
                     return None
     return resolutions
 
 
 def download(video: yt, audio_only: bool, resolution: str):
+    title = video.title
     if video.streams.get_by_resolution(resolution) is None:
-        print(video.title + " does not have the specified resolution available. Skipping...")
+        print(title + " does not have the specified resolution available. Skipping...")
         return
-    print("Downloading " + video.title)
+    print("Downloading " + title)
     while True:
         try:
             if audio_only:
-                video.streams.get_audio_only().download(path)
+                video.streams.get_audio_only().download(path, title + ".mp3")
             else:
-                video.streams.get_by_resolution(resolution).download(path)
+                video.streams.get_by_resolution(resolution).download(path, title + ".mp4")
             print("Download successful")
             break
         except:
             sleep(10)
-            print("Failed to download " + video.title + ", retrying...")
+            print("Failed to download " + title + ", retrying...")
             continue
 
 
