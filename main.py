@@ -39,7 +39,7 @@ def get_common_resolutions(videos: Iterable[yt]):
 
 
 def download(video: yt, audio_only: bool, resolution: str):
-    title = video.title.replace("\"", "").replace(".", "")
+    title = video.title.replace("\"", "").replace(".", "").replace(":", "")
     if video.streams.get_by_resolution(resolution) is None:
         print(title + " does not have the specified resolution available. Skipping...")
         return
