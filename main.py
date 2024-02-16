@@ -38,8 +38,15 @@ def get_common_resolutions(videos: Iterable[yt]):
     return resolutions
 
 
+def remove_all(string: str):
+    characters_to_delete = ["\\", "/", ".", "\"", ":"]
+    for c in characters_to_delete:
+        string = string.replace(c, "")
+    return string
+
+
 def download(video: yt, audio_only: bool, resolution: str):
-    title = video.title.replace("\"", "").replace(".", "").replace(":", "")
+    title = remove_all(video.title)
     if video.streams.get_by_resolution(resolution) is None:
         print(title + " does not have the specified resolution available. Skipping...")
         return
