@@ -99,7 +99,7 @@ if is_list:
 else:
     video = yt(url)
     if not audio_only:
-        print("Fetching available resolution for the video...")
+        print("Fetching available resolutions for the video...")
         resolutions = get_resolutions(video)
         print("Available resolutions are: " + str(resolutions))
         resolution = input("Please select your desired resolution: ")
