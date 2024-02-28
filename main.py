@@ -39,7 +39,7 @@ def get_common_resolutions(videos: Iterable[yt]):
 
 
 def remove_all(string: str):
-    characters_to_delete = ["\\", "/", ".", "\"", ":"]
+    characters_to_delete = ["\\", "/", ".", "\"", ":", ",", "?"]
     for c in characters_to_delete:
         string = string.replace(c, "")
     return string
