@@ -46,7 +46,8 @@ def remove_all(string: str):
 
 
 def download(video: yt, audio_only: bool, resolution: str):
-    title = remove_all(video.title)
+    title = video.title
+    title = remove_all(title)
     if video.streams.get_by_resolution(resolution) is None:
         print(title + " does not have the specified resolution available. Skipping...")
         return
@@ -59,6 +60,7 @@ def download(video: yt, audio_only: bool, resolution: str):
                 video.streams.get_by_resolution(resolution).download(path, title + ".mp4")
             print("Download successful")
             break
+
         except:
             sleep(10)
             print("Failed to download " + title + ", retrying...")
