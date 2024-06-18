@@ -2,8 +2,8 @@ from collections.abc import Iterable
 
 from time import sleep
 
-from pytubefix import YouTube as yt
-from pytubefix import Playlist as pl
+from pytube import YouTube as yt
+from pytube import Playlist as pl
 
 import re
 
@@ -61,9 +61,10 @@ def download(video: yt, audio_only: bool, resolution: str):
             print("Download successful")
             break
 
-        except:
+        except RuntimeError as e:
             sleep(10)
             print("Failed to download " + title + ", retrying...")
+            # print("Reason for failure: " + str(e))
             continue
 
 
@@ -94,16 +95,20 @@ if is_list:
 
     size = get_size(playlist.videos)
     for i in range(0, size - 1):
-        video = playlist.videos[i]
+        video: yt = playlist.videos[i]
+        video.use_oauth = True
+        video.allow_oauth_cache = True
         print("Downloading video " + str(i + 1) + " out of " + str(size - 1))
         download(video, audio_only, resolution)
 
 else:
-    video = yt(url)
+    video = yt(url, use_oauth=True, allow_oauth_cache=True)
     if not audio_only:
         print("Fetching available resolutions for the video...")
         resolutions = get_resolutions(video)
         print("Available resolutions are: " + str(resolutions))
         resolution = input("Please select your desired resolution: ")
-    video = yt(url)
+    video: yt = yt(url)
+    video.use_oauth = True
+    video.allow_oauth_cache = True
     download(video, audio_only, resolution)
