@@ -1,3 +1,5 @@
+# Max's YT downloader util v1.0
+
 from collections.abc import Iterable
 
 from time import sleep
