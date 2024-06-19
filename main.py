@@ -1,4 +1,4 @@
-# Max's YT downloader util v1.0
+# Max's YT downloader util v1.0a
 
 from collections.abc import Iterable
 
@@ -8,6 +8,8 @@ from pytube import YouTube as yt
 from pytube import Playlist as pl
 
 import re
+
+path = "D:\\downloads"
 
 
 def get_size(o):
@@ -70,47 +72,49 @@ def download(video: yt, audio_only: bool, resolution: str):
             continue
 
 
-path = "D:\\downloads"
+def main():
+    audio_prompt = ""
+    url = input("Paste the video or playlist URL here: ")
 
-url = input("Paste the video or playlist URL here: ")
+    while True:
+        audio_prompt = input("Download audio only? ").lower()
+        if audio_prompt == "y" or audio_prompt == "n":
+            break
 
-audio_prompt = ""
+    audio_only = (audio_prompt == "y")
 
-while True:
-    audio_prompt = input("Download audio only? ").lower()
-    if audio_prompt == "y" or audio_prompt == "n":
-        break
+    resolution = ""
 
-audio_only = (audio_prompt == "y")
+    is_list = (re.search("list=", url) is not None)
 
-resolution = ""
+    if is_list:
+        playlist = pl(url)
+        if not audio_only:
+            print("Fetching available resolutions on all videos...")
+            resolutions = get_common_resolutions(playlist.videos)
+            print("Available resolutions are: " + str(resolutions))
+            resolution = input("Please select your desired resolution: ")
 
-is_list = (re.search("list=", url) is not None)
+        size = get_size(playlist.videos)
+        for i in range(0, size - 1):
+            video: yt = playlist.videos[i]
+            video.use_oauth = True
+            video.allow_oauth_cache = True
+            print("Downloading video " + str(i + 1) + " out of " + str(size - 1))
+            download(video, audio_only, resolution)
 
-if is_list:
-    playlist = pl(url)
-    if not audio_only:
-        print("Fetching available resolutions on all videos...")
-        resolutions = get_common_resolutions(playlist.videos)
-        print("Available resolutions are: " + str(resolutions))
-        resolution = input("Please select your desired resolution: ")
-
-    size = get_size(playlist.videos)
-    for i in range(0, size - 1):
-        video: yt = playlist.videos[i]
+    else:
+        video = yt(url, use_oauth=True, allow_oauth_cache=True)
+        if not audio_only:
+            print("Fetching available resolutions for the video...")
+            resolutions = get_resolutions(video)
+            print("Available resolutions are: " + str(resolutions))
+            resolution = input("Please select your desired resolution: ")
+        video: yt = yt(url)
         video.use_oauth = True
         video.allow_oauth_cache = True
-        print("Downloading video " + str(i + 1) + " out of " + str(size - 1))
         download(video, audio_only, resolution)
 
-else:
-    video = yt(url, use_oauth=True, allow_oauth_cache=True)
-    if not audio_only:
-        print("Fetching available resolutions for the video...")
-        resolutions = get_resolutions(video)
-        print("Available resolutions are: " + str(resolutions))
-        resolution = input("Please select your desired resolution: ")
-    video: yt = yt(url)
-    video.use_oauth = True
-    video.allow_oauth_cache = True
-    download(video, audio_only, resolution)
+
+if __name__ == '__main__':
+    main()
