@@ -1,4 +1,3 @@
-# Max's YT downloader util v1.1
 import shutil
 from collections.abc import Iterable
 
@@ -11,7 +10,7 @@ import re
 import os
 
 defpath: str = "D:\\downloads"
-
+version: str = "1.1a"
 
 def get_size(o):
     s = 0
@@ -82,6 +81,7 @@ def download(video: yt, audio_only: bool, resolution: str):
 
 
 def main():
+    print("Welcome to Max's YT downloader version " + version)
     if not os.path.isdir(defpath):
         os.makedirs(defpath)
     url = input("Paste the video or playlist URL here: ")
