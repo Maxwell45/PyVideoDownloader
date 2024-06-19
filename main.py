@@ -1,5 +1,5 @@
-# Max's YT downloader util v1.0a
-
+# Max's YT downloader util v1.1
+import shutil
 from collections.abc import Iterable
 
 from time import sleep
@@ -8,8 +8,9 @@ from pytube import YouTube as yt
 from pytube import Playlist as pl
 
 import re
+import os
 
-path = "D:\\downloads"
+defpath: str = "D:\\downloads"
 
 
 def get_size(o):
@@ -17,6 +18,13 @@ def get_size(o):
     for _ in o:
         s += 1
     return s
+
+
+def remake_dir(path: str):
+    if os.path.isdir(path):
+        shutil.rmtree(path)
+    os.makedirs(path)
+    os.chdir(path)
 
 
 def get_resolutions(video: yt):
@@ -56,6 +64,7 @@ def download(video: yt, audio_only: bool, resolution: str):
         print(title + " does not have the specified resolution available. Skipping...")
         return
     print("Downloading " + title)
+    path: str = os.getcwd()
     while True:
         try:
             if audio_only:
@@ -68,12 +77,13 @@ def download(video: yt, audio_only: bool, resolution: str):
         except RuntimeError as e:
             sleep(10)
             print("Failed to download " + title + ", retrying...")
-            # print("Reason for failure: " + str(e))
+            print("Reason for failure: " + str(e))
             continue
 
 
 def main():
-    audio_prompt = ""
+    if not os.path.isdir(defpath):
+        os.makedirs(defpath)
     url = input("Paste the video or playlist URL here: ")
 
     while True:
@@ -89,12 +99,15 @@ def main():
 
     if is_list:
         playlist = pl(url)
+        folder_name: str = remove_all(playlist.title)
         if not audio_only:
+            remake_dir(defpath + "/mp4/" + folder_name)
             print("Fetching available resolutions on all videos...")
             resolutions = get_common_resolutions(playlist.videos)
             print("Available resolutions are: " + str(resolutions))
             resolution = input("Please select your desired resolution: ")
-
+        else:
+            remake_dir(defpath + "/mp3/" + folder_name)
         size = get_size(playlist.videos)
         for i in range(0, size - 1):
             video: yt = playlist.videos[i]
@@ -106,10 +119,13 @@ def main():
     else:
         video = yt(url, use_oauth=True, allow_oauth_cache=True)
         if not audio_only:
+            remake_dir(defpath + "/mp4/" + "Singles")
             print("Fetching available resolutions for the video...")
             resolutions = get_resolutions(video)
             print("Available resolutions are: " + str(resolutions))
             resolution = input("Please select your desired resolution: ")
+        else:
+            remake_dir(defpath + "/mp3/" + "Singles")
         video: yt = yt(url)
         video.use_oauth = True
         video.allow_oauth_cache = True
