@@ -10,7 +10,7 @@ import re
 import os
 
 defpath: str = "D:\\downloads"
-version: str = "1.1a"
+version: str = "1.1b"
 
 def get_size(o):
     s = 0
@@ -76,7 +76,6 @@ def download(video: yt, audio_only: bool, resolution: str):
         except RuntimeError as e:
             sleep(10)
             print("Failed to download " + title + ", retrying...")
-            print("Reason for failure: " + str(e))
             continue
 
 
