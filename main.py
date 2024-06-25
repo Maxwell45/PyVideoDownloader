@@ -10,7 +10,7 @@ import re
 import os
 
 defpath: str = "D:\\downloads"
-version: str = "1.1b"
+version: str = "1.1c"
 
 def get_size(o):
     s = 0
@@ -118,13 +118,15 @@ def main():
     else:
         video = yt(url, use_oauth=True, allow_oauth_cache=True)
         if not audio_only:
-            remake_dir(defpath + "/mp4/" + "Singles")
+            if not os.path.isdir(defpath + "/mp4/Singles"):
+                os.makedirs(defpath + "/mp4/Singles")
             print("Fetching available resolutions for the video...")
             resolutions = get_resolutions(video)
             print("Available resolutions are: " + str(resolutions))
             resolution = input("Please select your desired resolution: ")
         else:
-            remake_dir(defpath + "/mp3/" + "Singles")
+            if not os.path.isdir(defpath + "/mp3/Singles"):
+                os.makedirs(defpath + "/mp3/Singles")
         video: yt = yt(url)
         video.use_oauth = True
         video.allow_oauth_cache = True
