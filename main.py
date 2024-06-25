@@ -120,6 +120,7 @@ def main():
         if not audio_only:
             if not os.path.isdir(defpath + "/mp4/Singles"):
                 os.makedirs(defpath + "/mp4/Singles")
+            os.chdir(defpath + "/mp4/Singles")
             print("Fetching available resolutions for the video...")
             resolutions = get_resolutions(video)
             print("Available resolutions are: " + str(resolutions))
@@ -127,6 +128,7 @@ def main():
         else:
             if not os.path.isdir(defpath + "/mp3/Singles"):
                 os.makedirs(defpath + "/mp3/Singles")
+            os.chdir(defpath + "/mp3/Singles")
         video: yt = yt(url)
         video.use_oauth = True
         video.allow_oauth_cache = True
