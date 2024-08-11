@@ -10,7 +10,7 @@ import re
 import os
 
 defpath: str = "D:\\downloads"
-version: str = "1.2"
+version: str = "1.3"
 
 def get_size(o):
     s = 0
