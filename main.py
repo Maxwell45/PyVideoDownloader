@@ -3,8 +3,8 @@ from collections.abc import Iterable
 
 from time import sleep
 
-from pytube import YouTube as yt
-from pytube import Playlist as pl
+from pytubefix import YouTube as yt
+from pytubefix import Playlist as pl
 
 import re
 import os
