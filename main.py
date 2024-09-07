@@ -108,11 +108,11 @@ def main():
         else:
             remake_dir(defpath + "/mp3/" + folder_name)
         size = get_size(playlist.videos)
-        for i in range(0, size - 1):
+        for i in range(0, size):
             video: yt = playlist.videos[i]
             video.use_oauth = True
             video.allow_oauth_cache = True
-            print("Downloading video " + str(i + 1) + " out of " + str(size - 1))
+            print("Downloading video " + str(i + 1) + " out of " + str(size))
             download(video, audio_only, resolution)
 
     else:
