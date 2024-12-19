@@ -10,7 +10,7 @@ import re
 import os
 
 defpath: str = "D:\\downloads"
-version: str = "1.3"
+version: str = "1.4"
 
 def get_size(o):
     s = 0
@@ -57,8 +57,12 @@ def remove_all(string: str):
 
 
 def download(video: yt, audio_only: bool, resolution: str):
-    title = video.title
-    title = remove_all(title)
+    try:
+        title = video.title
+        title = remove_all(title)
+    except:
+        print("Failed to fetch video's title.")
+        title = "Video"
     if video.streams.get_by_resolution(resolution) is None:
         print(title + " does not have the specified resolution available. Skipping...")
         return
